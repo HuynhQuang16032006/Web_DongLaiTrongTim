@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   try {
     // 1. Xác thực Webhook bằng Token
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader || authHeader !== `Bearer ${SEPAY_WEBHOOK_TOKEN}`) {
+    if (!authHeader || !authHeader.includes(SEPAY_WEBHOOK_TOKEN)) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
