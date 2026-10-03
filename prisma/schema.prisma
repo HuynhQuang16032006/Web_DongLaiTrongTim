@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Order {
+  id             String   @id @default(cuid())
+  orderCode      String   @unique
+  customerName   String
+  customerPhone  String
+  customerEmail  String
+  ticketQuantity Int
+  ticketPrice    Int      @default(89000)
+  donationAmount Int      @default(0)
+  totalAmount    Int
+  status         String   @default("PENDING") // PENDING, PAID, EXPIRED
+  checkedInCount Int      @default(0) // Số lượng khách đã đến
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  foodOrders     FoodOrder[]
+}
+
+model FoodOrder {
+  id          String   @id @default(cuid())
+  orderCode   String
+  order       Order    @relation(fields: [orderCode], references: [orderCode])
+  tableNumber String
+  items       String   // JSON string of ordered items
+  totalAmount Int
+  status      String   @default("PENDING") // PENDING, DELIVERED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  username String @unique
+  password String
+}
