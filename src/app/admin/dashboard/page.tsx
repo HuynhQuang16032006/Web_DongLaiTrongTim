@@ -134,8 +134,8 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-warm-sand/50">
-                {data?.orders.filter((o: any) => o.status === "PAID" || o.status === "CHECKED_IN").length > 0 ? (
-                  data?.orders
+                {(data?.orders || []).filter((o: any) => o.status === "PAID" || o.status === "CHECKED_IN").length > 0 ? (
+                  (data?.orders || [])
                     .filter((o: any) => o.status === "PAID" || o.status === "CHECKED_IN")
                     .map((order: any) => (
                       <tr key={"tx-"+order.id} className="hover:bg-warm-cream/30">
