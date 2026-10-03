@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
-import { Check, MailCheck, LogOut, Loader2, AlertCircle, QrCode, Coffee, Users, CheckCircle2, Trash2 } from "lucide-react";
+import { Check, MailCheck, LogOut, Loader2, AlertCircle, QrCode, Coffee, Users, CheckCircle2, Trash2, Banknote } from "lucide-react";
 
 export default function AdminDashboard() {
   const [data, setData] = useState<{ orders: any[], summary: any } | null>(null);
@@ -73,6 +73,9 @@ export default function AdminDashboard() {
             <Link href="/admin/kitchen" className="flex items-center gap-2 px-4 py-2 bg-warm-dark rounded-lg text-white font-medium hover:bg-black transition-colors shadow-sm">
               <Coffee size={16} /> Quầy nước / Bếp
             </Link>
+            <Link href="/admin/statements" className="flex items-center gap-2 px-4 py-2 bg-green-600 rounded-lg text-white font-medium hover:bg-green-700 transition-colors shadow-sm">
+              <Banknote size={16} /> Sao kê
+            </Link>
             <button 
               onClick={() => {
                 document.cookie = "admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -119,41 +122,6 @@ export default function AdminDashboard() {
             </div>
           </div>
         )}
-
-        {/* Sao kê thanh toán */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-warm-sand">
-          <h2 className="text-xl font-playfair font-bold text-warm-dark mb-4">Sao kê thanh toán (Khách đã chuyển khoản)</h2>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-warm-sand/30 text-warm-dark font-medium border-b border-warm-sand">
-                <tr>
-                  <th className="p-3">Thời gian nhận</th>
-                  <th className="p-3">Mã vé</th>
-                  <th className="p-3">Khách hàng</th>
-                  <th className="p-3">Số tiền</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-warm-sand/50">
-                {(data?.orders || []).filter((o: any) => o.status === "PAID" || o.status === "CHECKED_IN").length > 0 ? (
-                  (data?.orders || [])
-                    .filter((o: any) => o.status === "PAID" || o.status === "CHECKED_IN")
-                    .map((order: any) => (
-                      <tr key={"tx-"+order.id} className="hover:bg-warm-cream/30">
-                        <td className="p-3 text-warm-brown">{new Date(order.updatedAt).toLocaleString('vi-VN')}</td>
-                        <td className="p-3 font-mono font-medium text-warm-dark">{order.orderCode}</td>
-                        <td className="p-3 font-medium">{order.customerName}</td>
-                        <td className="p-3 font-bold text-green-600">+{new Intl.NumberFormat('vi-VN').format(order.totalAmount)}đ</td>
-                      </tr>
-                    ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="p-4 text-center text-warm-brown">Chưa có giao dịch thanh toán nào</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
 
         {/* Orders Table */}
         <div className="bg-white rounded-2xl shadow-sm border border-warm-sand overflow-hidden">
