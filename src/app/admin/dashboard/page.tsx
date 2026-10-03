@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
-import { Check, MailCheck, LogOut, Loader2, AlertCircle, QrCode, Coffee, Users, CheckCircle2, Trash2, Banknote } from "lucide-react";
+import { Check, MailCheck, LogOut, Loader2, AlertCircle, QrCode, Coffee, Users, CheckCircle2, Trash2, Banknote, BarChart2 } from "lucide-react";
 
 export default function AdminDashboard() {
   const [data, setData] = useState<{ orders: any[], summary: any } | null>(null);
@@ -76,6 +76,9 @@ export default function AdminDashboard() {
             <Link href="/admin/statements" className="flex items-center gap-2 px-4 py-2 bg-green-600 rounded-lg text-white font-medium hover:bg-green-700 transition-colors shadow-sm">
               <Banknote size={16} /> Sao kê
             </Link>
+            <Link href="/admin/food-stats" className="flex items-center gap-2 px-4 py-2 bg-purple-600 rounded-lg text-white font-medium hover:bg-purple-700 transition-colors shadow-sm">
+              <BarChart2 size={16} /> Thống kê món
+            </Link>
             <button 
               onClick={() => {
                 document.cookie = "admin_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -107,21 +110,6 @@ export default function AdminDashboard() {
             <p className="text-3xl font-bold text-green-600">{new Intl.NumberFormat('vi-VN').format(data?.summary?.totalRevenue || 0)}đ</p>
           </div>
         </div>
-
-        {/* Food Stats */}
-        {data?.summary?.foodStats && Object.keys(data.summary.foodStats).length > 0 && (
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-warm-sand">
-            <h2 className="text-xl font-playfair font-bold text-warm-dark mb-4">Thống kê số lượng nước đã gọi</h2>
-            <div className="flex flex-wrap gap-4">
-              {Object.entries(data.summary.foodStats).map(([name, qty]: [string, any]) => (
-                <div key={name} className="flex items-center gap-2 px-4 py-2 bg-warm-cream rounded-xl border border-warm-sand">
-                  <span className="font-medium text-warm-dark">{name}</span>
-                  <span className="px-2 py-0.5 bg-warm-orange/20 text-warm-orange-light rounded-md font-bold text-sm">x{qty}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
         {/* Orders Table */}
         <div className="bg-white rounded-2xl shadow-sm border border-warm-sand overflow-hidden">
