@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { Coffee, Plus, Minus, CheckCircle2, ArrowRight, Ticket, Loader2 } from "lucide-react";
+import { Coffee, Plus, Minus, CheckCircle2, ArrowRight, Ticket, Loader2, QrCode } from "lucide-react";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
 // Đầy đủ menu quán NOW Coffee & Tea
 const MENU_ITEMS = [
@@ -92,12 +93,33 @@ export default function MenuPage() {
   const [ticketInfo, setTicketInfo] = useState<{ customerName: string, availableFree: number } | null>(null);
   
   const [tableNumber, setTableNumber] = useState("");
-  const [cart, setCart] = useState<{ id: number; quantity: number }[]>([]);
+  const [cart, setCart] = useState<{ id: number; quantity: number; note: string }[]>([]);
   
   const [loadingCode, setLoadingCode] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [success, setSuccess] = useState<{ tableNumber: string } | null>(null);
   const [error, setError] = useState("");
+  const [showScanner, setShowScanner] = useState(false);
+
+  useEffect(() => {
+    if (showScanner) {
+      const scanner = new Html5QrcodeScanner(
+        "qr-reader-menu",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        false
+      );
+
+      scanner.render((decodedText) => {
+        setOrderCode(decodedText);
+        setShowScanner(false);
+        scanner.clear();
+      }, () => {});
+
+      return () => {
+        scanner.clear().catch(console.error);
+      };
+    }
+  }, [showScanner]);
 
   const checkTicketCode = async () => {
     if (!orderCode) return;
@@ -132,12 +154,17 @@ export default function MenuPage() {
         if (newQ === 0) return prev.filter((item) => item.id !== id);
         return prev.map((item) => item.id === id ? { ...item, quantity: newQ } : item);
       }
-      if (delta > 0) return [...prev, { id, quantity: 1 }];
+      if (delta > 0) return [...prev, { id, quantity: 1, note: "" }];
       return prev;
     });
   };
 
+  const handleNote = (id: number, note: string) => {
+    setCart((prev) => prev.map((item) => (item.id === id ? { ...item, note } : item)));
+  };
+
   const getQuantity = (id: number) => cart.find((i) => i.id === id)?.quantity || 0;
+  const getNote = (id: number) => cart.find((i) => i.id === id)?.note || "";
 
   const handleSubmit = async () => {
     if (!orderCode || !tableNumber || cart.length === 0) {
@@ -149,7 +176,7 @@ export default function MenuPage() {
 
     const itemsDetail = cart.map(item => {
       const p = MENU_ITEMS.find(m => m.id === item.id);
-      return { id: item.id, name: p?.name, quantity: item.quantity, category: p?.category };
+      return { id: item.id, name: p?.name, quantity: item.quantity, category: p?.category, note: item.note };
     });
 
     try {
@@ -207,13 +234,27 @@ export default function MenuPage() {
           {!ticketInfo ? (
             <div>
               <label className="block text-sm font-medium text-warm-dark mb-2">Nhập Mã Vé của bạn để chọn nước</label>
+              
+              {showScanner ? (
+                <div className="mb-4 rounded-xl overflow-hidden border-2 border-warm-sand bg-white">
+                  <div id="qr-reader-menu" className="w-full"></div>
+                  <button onClick={() => setShowScanner(false)} className="w-full py-3 bg-warm-cream text-warm-dark font-medium text-sm text-center border-t border-warm-sand hover:bg-warm-sand transition-colors">
+                    Đóng máy quét
+                  </button>
+                </div>
+              ) : (
+                <button onClick={() => setShowScanner(true)} className="w-full mb-4 py-3 bg-warm-cream border border-warm-sand text-warm-dark rounded-xl flex items-center justify-center gap-2 hover:bg-warm-sand transition-colors font-medium">
+                  <QrCode size={18} /> Quét mã QR trên vé
+                </button>
+              )}
+
               <div className="flex gap-2">
                 <input 
                   type="text" 
-                  placeholder="VD: DLTT..." 
+                  placeholder="Hoặc nhập mã (VD: DLTT...)" 
                   value={orderCode} 
                   onChange={(e) => setOrderCode(e.target.value)}
-                  className="flex-1 px-4 py-3 rounded-xl border border-warm-sand uppercase focus:border-warm-orange outline-none font-mono"
+                  className="flex-1 px-4 py-3 rounded-xl border border-warm-sand uppercase focus:border-warm-orange outline-none font-mono text-sm"
                   onKeyDown={(e) => e.key === 'Enter' && checkTicketCode()}
                 />
                 <button 
@@ -278,23 +319,35 @@ export default function MenuPage() {
                   </div>
                   
                   {MENU_ITEMS.filter(i => i.category === category).map((item) => (
-                    <div key={item.id} className="bg-white p-4 rounded-2xl shadow-sm border border-warm-sand flex justify-between items-center transition-all hover:border-warm-orange/50">
-                      <div className="flex-1 pr-4">
-                        <p className="font-bold text-warm-dark">{item.name}</p>
+                    <div key={item.id} className="bg-white p-4 rounded-2xl shadow-sm border border-warm-sand flex flex-col gap-3 transition-all hover:border-warm-orange/50">
+                      <div className="flex justify-between items-center">
+                        <div className="flex-1 pr-4">
+                          <p className="font-bold text-warm-dark">{item.name}</p>
+                        </div>
+                        <div className="flex items-center gap-3 shrink-0">
+                          <button onClick={() => handleQuantity(item.id, -1)} className="w-8 h-8 rounded-full bg-warm-cream flex items-center justify-center text-warm-dark hover:bg-warm-sand transition-colors">
+                            <Minus size={16} />
+                          </button>
+                          <span className="w-4 text-center font-bold text-lg">{getQuantity(item.id)}</span>
+                          <button 
+                            onClick={() => handleQuantity(item.id, 1)} 
+                            disabled={currentTotalQty >= ticketInfo.availableFree}
+                            className="w-8 h-8 rounded-full bg-warm-orange flex items-center justify-center text-white hover:bg-warm-brown transition-colors disabled:opacity-30 disabled:hover:bg-warm-orange"
+                          >
+                            <Plus size={16} />
+                          </button>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-3 shrink-0">
-                        <button onClick={() => handleQuantity(item.id, -1)} className="w-8 h-8 rounded-full bg-warm-cream flex items-center justify-center text-warm-dark hover:bg-warm-sand transition-colors">
-                          <Minus size={16} />
-                        </button>
-                        <span className="w-4 text-center font-bold text-lg">{getQuantity(item.id)}</span>
-                        <button 
-                          onClick={() => handleQuantity(item.id, 1)} 
-                          disabled={currentTotalQty >= ticketInfo.availableFree}
-                          className="w-8 h-8 rounded-full bg-warm-orange flex items-center justify-center text-white hover:bg-warm-brown transition-colors disabled:opacity-30 disabled:hover:bg-warm-orange"
-                        >
-                          <Plus size={16} />
-                        </button>
-                      </div>
+                      
+                      {getQuantity(item.id) > 0 && (
+                        <input
+                          type="text"
+                          placeholder="Ghi chú (ít đá, ít ngọt...)"
+                          value={getNote(item.id)}
+                          onChange={(e) => handleNote(item.id, e.target.value)}
+                          className="w-full px-3 py-2 text-sm bg-warm-cream/30 border border-warm-sand rounded-lg focus:outline-none focus:border-warm-orange text-warm-dark"
+                        />
+                      )}
                     </div>
                   ))}
                 </div>

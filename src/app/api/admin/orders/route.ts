@@ -31,13 +31,26 @@ export async function GET(req: Request) {
       _sum: { ticketQuantity: true, donationAmount: true, totalAmount: true, checkedInCount: true }
     });
 
+    const foodOrders = await prisma.foodOrder.findMany();
+    const foodStats: Record<string, number> = {};
+    foodOrders.forEach(fo => {
+      try {
+        const items = JSON.parse(fo.items);
+        items.forEach((item: any) => {
+          if (!foodStats[item.name]) foodStats[item.name] = 0;
+          foodStats[item.name] += item.quantity;
+        });
+      } catch (e) {}
+    });
+
     return NextResponse.json({ 
       orders, 
       summary: {
         ticketsSold: summary._sum.ticketQuantity || 0,
         totalDonations: summary._sum.donationAmount || 0,
         totalRevenue: summary._sum.totalAmount || 0,
-        totalCheckedIn: summary._sum.checkedInCount || 0
+        totalCheckedIn: summary._sum.checkedInCount || 0,
+        foodStats
       } 
     }, { status: 200 });
   } catch (error) {

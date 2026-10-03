@@ -79,9 +79,16 @@ export default function KitchenDashboard() {
 
                   <ul className="space-y-3 mb-6">
                     {items.map((item: any, idx: number) => (
-                      <li key={idx} className="flex justify-between items-center pb-2 border-b border-warm-sand/50 last:border-0">
-                        <span className="font-medium text-warm-dark">{item.name}</span>
-                        <span className="font-bold text-warm-orange">x{item.quantity}</span>
+                      <li key={idx} className="flex flex-col pb-2 border-b border-warm-sand/50 last:border-0">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium text-warm-dark">{item.name}</span>
+                          <span className="font-bold text-warm-orange">x{item.quantity}</span>
+                        </div>
+                        {item.note && (
+                          <span className="text-xs text-warm-brown mt-1 bg-warm-sand/20 px-2 py-1 rounded inline-block w-fit">
+                            Ghi chú: <span className="italic">{item.note}</span>
+                          </span>
+                        )}
                       </li>
                     ))}
                   </ul>
