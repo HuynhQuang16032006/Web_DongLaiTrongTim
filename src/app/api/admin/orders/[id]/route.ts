@@ -23,9 +23,18 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   try {
     const { id } = await params;
     
-    // Phải xóa các đơn nước gắn với vé này trước
+    // Tìm order để lấy orderCode
+    const order = await prisma.order.findUnique({
+      where: { id }
+    });
+
+    if (!order) {
+      return NextResponse.json({ message: "Không tìm thấy đơn hàng" }, { status: 404 });
+    }
+
+    // Phải xóa các đơn nước gắn với vé này trước bằng orderCode
     await prisma.foodOrder.deleteMany({
-      where: { orderId: id }
+      where: { orderCode: order.orderCode }
     });
 
     // Xóa vé chính
