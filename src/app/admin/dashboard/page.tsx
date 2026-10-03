@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import axios from "axios";
-import { Check, MailCheck, LogOut, Loader2, AlertCircle, QrCode, Coffee, Users, CheckCircle2 } from "lucide-react";
+import { Check, MailCheck, LogOut, Loader2, AlertCircle, QrCode, Coffee, Users, CheckCircle2, Trash2 } from "lucide-react";
 
 export default function AdminDashboard() {
   const [data, setData] = useState<{ orders: any[], summary: any } | null>(null);
@@ -39,6 +39,17 @@ export default function AdminDashboard() {
       fetchData();
     } catch (err: any) {
       alert("Lỗi: " + (err.response?.data?.message || "Không thể xác nhận"));
+    }
+  };
+
+  const deleteOrder = async (orderId: string) => {
+    if (!confirm("Bạn có chắc chắn muốn xóa đơn hàng này không? Dữ liệu không thể khôi phục.")) return;
+    
+    try {
+      await axios.delete(`/api/admin/orders/${orderId}`);
+      fetchData();
+    } catch (err: any) {
+      alert("Lỗi: " + (err.response?.data?.message || "Không thể xóa"));
     }
   };
 
@@ -161,7 +172,7 @@ export default function AdminDashboard() {
                         <span className="text-warm-brown text-xs">Chưa gọi</span>
                       )}
                     </td>
-                    <td className="p-4">
+                    <td className="p-4 flex gap-2">
                       {order.status === "PENDING" && (
                         <button
                           onClick={() => confirmPayment(order.id)}
@@ -170,6 +181,12 @@ export default function AdminDashboard() {
                           <MailCheck size={14} /> Xác nhận tiền
                         </button>
                       )}
+                      <button
+                        onClick={() => deleteOrder(order.id)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-red-500 text-white rounded-lg text-xs font-medium hover:bg-red-700 transition-colors"
+                      >
+                        <Trash2 size={14} /> Xóa
+                      </button>
                     </td>
                   </tr>
                 ))}
