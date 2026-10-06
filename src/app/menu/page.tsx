@@ -265,7 +265,7 @@ export default function MenuPage() {
                   onKeyDown={(e) => e.key === 'Enter' && checkTicketCode()}
                 />
                 <button 
-                  onClick={checkTicketCode}
+                  onClick={() => checkTicketCode()}
                   disabled={loadingCode || !orderCode}
                   className="px-6 py-3 bg-warm-dark text-white rounded-xl hover:bg-black transition-colors disabled:opacity-50 flex items-center gap-2"
                 >
