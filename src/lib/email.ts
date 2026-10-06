@@ -24,6 +24,10 @@ export async function sendTicketEmail(order: any) {
   const canvas = createCanvas(templateImage.width, templateImage.height);
   const ctx = canvas.getContext('2d');
 
+  // Fill background with email background color to hide black edges on transparent pngs
+  ctx.fillStyle = '#FDFBF7';
+  ctx.fillRect(0, 0, templateImage.width, templateImage.height);
+
   // Draw base ticket
   ctx.drawImage(templateImage, 0, 0, templateImage.width, templateImage.height);
 
@@ -31,16 +35,17 @@ export async function sendTicketEmail(order: any) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#b72522'; // Dark red matching the ticket
-  ctx.font = 'italic bold 90px "Times New Roman"'; 
+  ctx.font = 'italic bold 70px sans-serif'; 
   
-  const textX = 2770;
-  const textY = 875;
+  // Center X of the right stub is ~2845. Y between the lines is ~663.
+  const textX = 2845;
+  const textY = 663;
   ctx.fillText(order.customerName, textX, textY);
 
-  // Draw QR code below address
-  const qrSize = 350;
+  // Draw QR code below address (Center Y ~ 1183)
+  const qrSize = 300;
   const qrX = textX - qrSize / 2;
-  const qrY = 1200; 
+  const qrY = 1183 - qrSize / 2; 
   ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
 
   // Export to base64
