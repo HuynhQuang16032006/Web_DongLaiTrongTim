@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import QRCode from "qrcode";
+import { createCanvas, loadImage } from "@napi-rs/canvas";
+import path from "path";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -10,10 +12,40 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendTicketEmail(order: any) {
-  // Generate QR Code for check-in (chỉ chứa mã vé)
+  // Generate QR Code for check-in
   const qrData = order.orderCode;
+  const qrBuffer = await QRCode.toBuffer(qrData, { margin: 1, width: 350 });
+  const qrImage = await loadImage(qrBuffer);
+
+  // Load ticket template
+  const templatePath = path.join(process.cwd(), 'public', 'ticket-template.png');
+  const templateImage = await loadImage(templatePath);
+
+  const canvas = createCanvas(templateImage.width, templateImage.height);
+  const ctx = canvas.getContext('2d');
+
+  // Draw base ticket
+  ctx.drawImage(templateImage, 0, 0, templateImage.width, templateImage.height);
+
+  // Configure text settings for Customer Name
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#b72522'; // Dark red matching the ticket
+  ctx.font = 'italic bold 90px "Times New Roman"'; 
   
-  const qrCodeDataUrl = await QRCode.toDataURL(qrData);
+  const textX = 2770;
+  const textY = 875;
+  ctx.fillText(order.customerName, textX, textY);
+
+  // Draw QR code below address
+  const qrSize = 350;
+  const qrX = textX - qrSize / 2;
+  const qrY = 1200; 
+  ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
+
+  // Export to base64
+  const ticketBuffer = canvas.toBuffer('image/png');
+  const ticketBase64 = ticketBuffer.toString('base64');
 
   const mailOptions = {
     from: `"Đọng Band" <${process.env.SMTP_USER}>`,
@@ -35,13 +67,13 @@ export async function sendTicketEmail(order: any) {
         </div>
 
         <div style="text-align: center; margin: 30px 0;">
-          <p style="font-size: 14px; color: #8B5A33; margin-bottom: 10px;">Vui lòng xuất trình mã QR này tại cửa sự kiện để check-in:</p>
-          <img src="cid:qrcode" alt="QR Code" style="width: 200px; height: 200px; border: 2px solid #C69774; border-radius: 10px; padding: 10px; background: white;" />
+          <p style="font-size: 14px; color: #8B5A33; margin-bottom: 10px;">Vui lòng lưu lại hình ảnh vé dưới đây và xuất trình mã QR tại cửa sự kiện để check-in:</p>
+          <img src="cid:ticket" alt="Vé tham dự Đọng Lại Trong Tim" style="width: 100%; max-width: 600px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
         </div>
 
         <h4 style="color: #8B5A33;">Thông tin sự kiện:</h4>
         <ul>
-          <li><strong>Thời gian:</strong> 19:30 - 02/01/2027</li>
+          <li><strong>Thời gian:</strong> 16:00 - 31/01/2026</li>
           <li><strong>Địa điểm:</strong> NOW Coffee and Tea (190 Trương Công Định, phường Tân Bình, HCM)</li>
         </ul>
 
@@ -51,13 +83,14 @@ export async function sendTicketEmail(order: any) {
     `,
     attachments: [
       {
-        filename: 'qrcode.png',
-        content: qrCodeDataUrl.split("base64,")[1],
+        filename: 've-dong-lai-trong-tim.png',
+        content: ticketBase64,
         encoding: 'base64',
-        cid: 'qrcode' 
+        cid: 'ticket' 
       }
     ]
   };
 
   await transporter.sendMail(mailOptions);
 }
+
