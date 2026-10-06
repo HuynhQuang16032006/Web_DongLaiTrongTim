@@ -42,6 +42,12 @@ export default function TicketForm() {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="bg-white/80 backdrop-blur-sm p-5 md:p-8 rounded-2xl shadow-xl border border-warm-sand/50">
       <div className="text-center mb-8">
@@ -49,7 +55,7 @@ export default function TicketForm() {
         <p className="text-warm-brown text-sm">Cùng chung tay tạo nên những điều ý nghĩa</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} onKeyDown={handleKeyDown} className="space-y-6">
         {/* Thông tin cá nhân */}
         <div className="space-y-4">
           <div>
