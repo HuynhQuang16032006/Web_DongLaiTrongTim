@@ -255,7 +255,7 @@ export default function MenuPage() {
                 </button>
               )}
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <input 
                   type="text" 
                   placeholder="Hoặc nhập mã (VD: DLTT...)" 
@@ -267,7 +267,7 @@ export default function MenuPage() {
                 <button 
                   onClick={() => checkTicketCode()}
                   disabled={loadingCode || !orderCode}
-                  className="px-6 py-3 bg-warm-dark text-white rounded-xl hover:bg-black transition-colors disabled:opacity-50 flex items-center gap-2"
+                  className="px-6 py-3 bg-warm-dark text-white rounded-xl hover:bg-black transition-colors disabled:opacity-50 flex items-center justify-center gap-2 shrink-0 whitespace-nowrap"
                 >
                   {loadingCode ? <Loader2 size={18} className="animate-spin" /> : <Ticket size={18} />}
                   Tiếp tục
