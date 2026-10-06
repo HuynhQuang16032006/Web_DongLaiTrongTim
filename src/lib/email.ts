@@ -36,16 +36,16 @@ export async function sendTicketEmail(order: any) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#b72522'; // Dark red matching the ticket
-  ctx.font = '120px "GreatVibes"'; // Very soft, elegant, and larger cursive font
+  ctx.font = '100px "GreatVibes"'; // Very soft, elegant cursive font
   
-  // Center X aligned with "VÉ THAM DỰ", Y centered between the two lines (lowered to 675)
-  const textX = 2783;
+  // Shifted left slightly
+  const textX = 2750;
   const textY = 675;
   ctx.fillText(order.customerName, textX, textY);
 
   // Draw QR code below address, shifted up and left
   const qrSize = 300;
-  const qrX = textX - qrSize / 2;
+  const qrX = 2783 - qrSize / 2; // Fixed QR center at 2783
   const qrY = 970; 
   ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
 
