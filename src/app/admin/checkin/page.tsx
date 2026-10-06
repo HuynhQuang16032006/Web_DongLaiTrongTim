@@ -33,7 +33,7 @@ export default function CheckinPage() {
     setSuccessMsg("");
 
     try {
-      const res = await axios.get(`/api/admin/checkin?code=${codeToSearch.toUpperCase()}`);
+      const res = await axios.get(`/api/admin/checkin?code=${codeToSearch.toUpperCase()}&t=${new Date().getTime()}`);
       setOrderInfo(res.data);
       const available = res.data.ticketQuantity - res.data.checkedInCount;
       setCheckinCount(available);

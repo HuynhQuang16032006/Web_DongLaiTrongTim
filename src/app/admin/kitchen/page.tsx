@@ -13,7 +13,7 @@ export default function KitchenDashboard() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get("/api/admin/kitchen");
+      const res = await axios.get(`/api/admin/kitchen?t=${new Date().getTime()}`);
       setOrders(res.data);
     } catch (e: any) {
       if (e.response?.status === 401) window.location.href = "/admin";

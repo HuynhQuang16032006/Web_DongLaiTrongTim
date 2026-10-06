@@ -15,7 +15,7 @@ export default function StatementsPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("/api/admin/orders");
+        const res = await axios.get(`/api/admin/orders?t=${new Date().getTime()}`);
         setData(res.data);
       } catch (err: any) {
         if (err.response?.status === 401) {
