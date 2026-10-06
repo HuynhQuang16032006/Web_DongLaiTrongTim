@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import QRCode from "qrcode";
-import { createCanvas, loadImage } from "@napi-rs/canvas";
+import { createCanvas, loadImage, GlobalFonts } from "@napi-rs/canvas";
 import path from "path";
 
 const transporter = nodemailer.createTransport({
@@ -12,6 +12,11 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendTicketEmail(order: any) {
+  // Load custom font to support Vietnamese
+  if (!GlobalFonts.has("DancingScript")) {
+    GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'DancingScript.ttf'), 'DancingScript');
+  }
+
   // Generate QR Code for check-in
   const qrData = order.orderCode;
   const qrBuffer = await QRCode.toBuffer(qrData, { margin: 1, width: 350 });
@@ -24,28 +29,24 @@ export async function sendTicketEmail(order: any) {
   const canvas = createCanvas(templateImage.width, templateImage.height);
   const ctx = canvas.getContext('2d');
 
-  // Fill background with email background color to hide black edges on transparent pngs
-  ctx.fillStyle = '#FDFBF7';
-  ctx.fillRect(0, 0, templateImage.width, templateImage.height);
-
-  // Draw base ticket
+  // Draw base ticket (transparent background preserved to avoid glow artifacts)
   ctx.drawImage(templateImage, 0, 0, templateImage.width, templateImage.height);
 
   // Configure text settings for Customer Name
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#b72522'; // Dark red matching the ticket
-  ctx.font = 'italic bold 70px sans-serif'; 
+  ctx.font = 'bold 100px "DancingScript"'; // Beautiful cursive font with VN support
   
-  // Center X of the right stub is ~2845. Y between the lines is ~663.
-  const textX = 2845;
-  const textY = 663;
+  // Center X aligned with "VÉ THAM DỰ", Y centered between the two lines
+  const textX = 2783;
+  const textY = 650;
   ctx.fillText(order.customerName, textX, textY);
 
-  // Draw QR code below address (Center Y ~ 1183)
+  // Draw QR code below address, shifted up and left
   const qrSize = 300;
   const qrX = textX - qrSize / 2;
-  const qrY = 1183 - qrSize / 2; 
+  const qrY = 970; 
   ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
 
   // Export to base64
