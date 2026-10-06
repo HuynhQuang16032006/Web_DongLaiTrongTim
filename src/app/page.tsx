@@ -29,33 +29,33 @@ export default function Home() {
             <Sparkles size={16} className="text-warm-orange-light" />
             Show Âm Nhạc Gây Quỹ
           </span>
-          <h1 className="text-6xl md:text-8xl font-playfair font-bold mb-6 tracking-tight drop-shadow-2xl">
+          <h1 className="text-5xl sm:text-6xl md:text-8xl font-playfair font-bold mb-6 tracking-tight drop-shadow-2xl">
             Đọng Lại Trong Tim
           </h1>
-          <p className="text-xl md:text-3xl font-light text-warm-cream/90 max-w-3xl mx-auto mb-10 drop-shadow-lg">
+          <p className="text-lg sm:text-xl md:text-3xl font-light text-warm-cream/90 max-w-3xl mx-auto mb-10 drop-shadow-lg">
             Nơi âm nhạc vang lên, tình yêu thương lan tỏa.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-warm-cream mb-10">
-            <div className="flex items-center gap-3 bg-warm-dark/40 border border-white/10 px-6 py-4 rounded-2xl backdrop-blur-md shadow-2xl hover:bg-warm-dark/60 transition-colors">
-              <Calendar className="text-warm-orange" size={24} />
+            <div className="flex items-center gap-3 bg-warm-dark/40 border border-white/10 px-6 py-4 rounded-2xl backdrop-blur-md shadow-2xl hover:bg-warm-dark/60 transition-colors w-full sm:w-auto">
+              <Calendar className="text-warm-orange shrink-0" size={24} />
               <div className="text-left">
                 <p className="text-xs text-white/50 uppercase tracking-wider">Thời gian</p>
-                <p className="font-semibold text-lg">16:30 - 02/01/2027</p>
+                <p className="font-semibold text-base sm:text-lg">16:30 - 02/01/2027</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 bg-warm-dark/40 border border-white/10 px-6 py-4 rounded-2xl backdrop-blur-md shadow-2xl hover:bg-warm-dark/60 transition-colors">
-              <MapPin className="text-warm-orange" size={24} />
+            <div className="flex items-center gap-3 bg-warm-dark/40 border border-white/10 px-6 py-4 rounded-2xl backdrop-blur-md shadow-2xl hover:bg-warm-dark/60 transition-colors w-full sm:w-auto">
+              <MapPin className="text-warm-orange shrink-0" size={24} />
               <div className="text-left">
                 <p className="text-xs text-white/50 uppercase tracking-wider">Địa điểm</p>
-                <p className="font-semibold text-lg">NOW Coffee and Tea, Tân Bình</p>
+                <p className="font-semibold text-base sm:text-lg truncate max-w-[200px] sm:max-w-none">NOW Coffee and Tea, Tân Bình</p>
               </div>
             </div>
           </div>
 
           <button
             onClick={scrollToTicket}
-            className="inline-flex items-center gap-3 px-8 py-4 bg-warm-orange hover:bg-warm-brown text-white font-semibold rounded-full shadow-[0_0_40px_rgba(212,123,74,0.4)] hover:shadow-[0_0_60px_rgba(139,90,51,0.6)] transition-all scale-100 hover:scale-105"
+            className="inline-flex items-center gap-3 px-8 py-4 bg-warm-orange hover:bg-warm-brown text-white font-semibold rounded-full shadow-[0_0_40px_rgba(212,123,74,0.4)] hover:shadow-[0_0_60px_rgba(139,90,51,0.6)] transition-all scale-100 hover:scale-105 w-full sm:w-auto justify-center"
           >
             <Ticket size={20} />
             Đặt vé ngay
@@ -68,16 +68,16 @@ export default function Home() {
       </section>
 
       {/* GIỚI THIỆU SỰ KIỆN & BAND */}
-      <section className="py-24 bg-warm-cream relative">
+      <section className="py-24 bg-warm-cream relative overflow-hidden">
         <div className="absolute top-0 left-0 w-64 h-64 bg-warm-orange/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
 
         <div className="container mx-auto px-4 max-w-7xl">
-          <div className="flex flex-col lg:flex-row gap-16 items-center">
+          <div className="flex flex-col lg:flex-row gap-12 lg:gap-16 items-center">
 
             {/* Ảnh Band */}
-            <div className="w-full lg:w-1/2 relative group">
+            <div className="w-full lg:w-1/2 relative group px-4 sm:px-0">
               <div className="absolute inset-0 bg-warm-orange/20 rounded-3xl translate-x-4 translate-y-4 transition-transform group-hover:translate-x-6 group-hover:translate-y-6" />
-              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden border-8 border-white shadow-2xl bg-warm-dark/10">
+              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden border-4 sm:border-8 border-white shadow-2xl bg-warm-dark/10">
                 <Image
                   src="/band-about.jpg"
                   alt="Đọng Band"
@@ -96,15 +96,15 @@ export default function Home() {
                 </h2>
                 <div className="w-24 h-1.5 bg-warm-orange rounded-full mb-8" />
 
-                <p className="text-lg text-warm-brown leading-relaxed mb-6 font-light">
+                <p className="text-base sm:text-lg text-warm-brown leading-relaxed mb-6 font-light">
                   <strong className="text-warm-dark font-medium">"Đọng Lại Trong Tim"</strong> là một đêm nhạc acoustic mộc mạc, nơi chúng ta có thể tạm gác lại những lo âu hối hả của cuộc sống, ngồi lại bên nhau trong một không gian gần gũi.
                 </p>
-                <p className="text-lg text-warm-brown leading-relaxed font-light">
+                <p className="text-base sm:text-lg text-warm-brown leading-relaxed font-light">
                   Đọng Band tin rằng âm nhạc không chỉ để nghe, mà còn để chia sẻ. Toàn bộ lợi nhuận từ việc bán vé và quyên góp trong đêm nhạc sẽ được chúng tôi sử dụng vào mục đích thiện nguyện, mang lại một chút ấm áp cho những hoàn cảnh khó khăn.
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-6 pt-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 pt-6">
                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-warm-sand hover:shadow-md transition-shadow group">
                   <Music className="text-warm-orange w-8 h-8 mb-4 group-hover:scale-110 transition-transform" />
                   <h4 className="font-bold text-warm-dark mb-2">Acoustic Live</h4>

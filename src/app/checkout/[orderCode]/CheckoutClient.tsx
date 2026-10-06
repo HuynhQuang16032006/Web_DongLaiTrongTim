@@ -114,7 +114,7 @@ export default function CheckoutClient({ order }: { order: OrderData }) {
   return (
     <>
       {/* Trái: Thông tin chuyển khoản */}
-      <div className="flex-1 p-8 md:p-12 bg-warm-dark text-white flex flex-col justify-between">
+      <div className="flex-1 p-6 md:p-12 bg-warm-dark text-white flex flex-col justify-between">
         <div>
           <div className="inline-flex items-center gap-2 bg-warm-orange/20 text-warm-orange-light px-4 py-2 rounded-full text-sm font-medium mb-6 animate-pulse">
             <Loader2 size={16} className="animate-spin" />
@@ -128,8 +128,8 @@ export default function CheckoutClient({ order }: { order: OrderData }) {
           <div className="space-y-6">
             <div>
               <p className="text-sm text-warm-cream/50 mb-1">Mã đơn hàng / Nội dung chuyển khoản</p>
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/10">
-                <span className="font-mono text-xl font-bold tracking-wider">{order.orderCode}</span>
+              <div className="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/10 overflow-hidden">
+                <span className="font-mono text-xl font-bold tracking-wider truncate mr-2">{order.orderCode}</span>
                 <CopyButton text={order.orderCode} />
               </div>
             </div>
@@ -137,7 +137,7 @@ export default function CheckoutClient({ order }: { order: OrderData }) {
             <div>
               <p className="text-sm text-warm-cream/50 mb-1">Số tiền thanh toán</p>
               <div className="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/10">
-                <span className="text-2xl font-bold text-warm-orange-light">
+                <span className="text-2xl font-bold text-warm-orange-light truncate mr-2">
                   {new Intl.NumberFormat('vi-VN').format(order.totalAmount)}đ
                 </span>
                 <CopyButton text={order.totalAmount.toString()} />
@@ -154,21 +154,21 @@ export default function CheckoutClient({ order }: { order: OrderData }) {
       </div>
 
       {/* Phải: Mã QR */}
-      <div className="flex-1 p-8 md:p-12 bg-white flex flex-col items-center justify-center relative">
+      <div className="flex-1 p-6 md:p-12 bg-white flex flex-col items-center justify-center relative">
         {/* Countdown */}
-        <div className="absolute top-8 right-8 flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full font-mono font-medium border border-red-100">
+        <div className="relative md:absolute md:top-8 md:right-8 mb-6 md:mb-0 flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-full font-mono font-medium border border-red-100 self-end md:self-auto">
           <Clock size={16} />
           {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
         </div>
 
-        <h3 className="text-lg font-medium text-warm-dark mb-6 text-center mt-12">Quét mã QR qua ứng dụng ngân hàng</h3>
-        <div className="bg-white p-4 rounded-2xl shadow-sm border border-warm-sand mb-8">
+        <h3 className="text-lg font-medium text-warm-dark mb-6 text-center md:mt-12">Quét mã QR qua ứng dụng ngân hàng</h3>
+        <div className="bg-white p-4 rounded-2xl shadow-sm border border-warm-sand mb-8 w-full max-w-[300px]">
           <Image 
             src={qrUrl} 
             alt="QR Code" 
             width={300} 
             height={300} 
-            className="rounded-xl"
+            className="rounded-xl w-full h-auto"
             unoptimized
           />
         </div>

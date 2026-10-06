@@ -4,12 +4,12 @@ import Link from "next/link";
 
 export default function FloatingContact() {
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col gap-4">
+    <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col gap-4">
       {/* Nút Zalo */}
       <Link 
         href="https://zalo.me/09xxxxxx" // Thay bằng số điện thoại thật
         target="_blank"
-        className="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform relative group"
+        className="w-12 h-12 md:w-14 md:h-14 bg-blue-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform relative group"
       >
         <span className="absolute -top-1 -right-1 flex h-4 w-4">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
@@ -28,7 +28,7 @@ export default function FloatingContact() {
       <Link 
         href="https://m.me/ten_page_cua_ban" // Thay bằng link Messenger thật
         target="_blank"
-        className="w-14 h-14 bg-gradient-to-tr from-blue-600 to-pink-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform relative group"
+        className="w-12 h-12 md:w-14 md:h-14 bg-gradient-to-tr from-blue-600 to-pink-500 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform relative group"
       >
         <svg width="32" height="32" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2C6.477 2 2 6.14 2 11.25C2 14.156 3.493 16.743 5.824 18.36C5.975 18.471 6.075 18.638 6.082 18.825L6.155 20.579C6.182 21.264 6.944 21.656 7.514 21.278L9.589 19.897C9.729 19.803 9.895 19.761 10.059 19.779C10.686 19.851 11.336 19.89 12 19.89C17.523 19.89 22 15.75 22 10.64C22 5.53 17.523 2 12 2ZM12.753 13.916C12.399 14.475 11.602 14.526 11.185 14.015L9.362 11.792C9.098 11.469 8.608 11.411 8.272 11.664L6.194 13.218C5.641 13.632 4.908 12.981 5.253 12.385L7.307 8.835C7.661 8.276 8.458 8.225 8.875 8.736L10.698 10.959C10.962 11.282 11.452 11.34 11.788 11.087L13.866 9.533C14.419 9.119 15.152 9.77 14.807 10.366L12.753 13.916Z"/>

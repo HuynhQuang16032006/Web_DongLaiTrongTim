@@ -43,7 +43,7 @@ export default function TicketForm() {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-warm-sand/50">
+    <div className="bg-white/80 backdrop-blur-sm p-5 md:p-8 rounded-2xl shadow-xl border border-warm-sand/50">
       <div className="text-center mb-8">
         <h3 className="text-2xl font-playfair font-bold text-warm-dark mb-2">Đặt Vé Tham Gia</h3>
         <p className="text-warm-brown text-sm">Cùng chung tay tạo nên những điều ý nghĩa</p>
