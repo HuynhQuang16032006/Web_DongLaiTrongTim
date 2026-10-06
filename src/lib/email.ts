@@ -36,16 +36,22 @@ export async function sendTicketEmail(order: any) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#b72522'; // Dark red matching the ticket
-  ctx.font = '100px "GreatVibes"'; // Very soft, elegant cursive font
+  
+  // Dynamic font size if name is too long
+  let fontSize = 100;
+  if (order.customerName && order.customerName.length > 16) {
+    fontSize = Math.max(60, Math.floor(100 * (16 / order.customerName.length)));
+  }
+  ctx.font = `${fontSize}px "GreatVibes"`; // Very soft, elegant cursive font
   
   // Shifted left slightly
   const textX = 2750;
   const textY = 675;
   ctx.fillText(order.customerName, textX, textY);
 
-  // Draw QR code below address, shifted up and left
+  // Draw QR code below address, shifted slightly left to fix off-center issue
   const qrSize = 300;
-  const qrX = 2783 - qrSize / 2; // Fixed QR center at 2783
+  const qrX = 2740 - qrSize / 2; // QR center shifted left to 2740
   const qrY = 970; 
   ctx.drawImage(qrImage, qrX, qrY, qrSize, qrSize);
 
