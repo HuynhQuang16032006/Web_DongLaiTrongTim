@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
 
 export async function sendTicketEmail(order: any) {
   // Load custom font to support Vietnamese
-  if (!GlobalFonts.has("DancingScript")) {
-    GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'DancingScript.ttf'), 'DancingScript');
+  if (!GlobalFonts.has("GreatVibes")) {
+    GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'GreatVibes.ttf'), 'GreatVibes');
   }
 
   // Generate QR Code for check-in
@@ -36,11 +36,11 @@ export async function sendTicketEmail(order: any) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#b72522'; // Dark red matching the ticket
-  ctx.font = 'bold 100px "DancingScript"'; // Beautiful cursive font with VN support
+  ctx.font = '120px "GreatVibes"'; // Very soft, elegant, and larger cursive font
   
-  // Center X aligned with "VÉ THAM DỰ", Y centered between the two lines
+  // Center X aligned with "VÉ THAM DỰ", Y centered between the two lines (lowered to 675)
   const textX = 2783;
-  const textY = 650;
+  const textY = 675;
   ctx.fillText(order.customerName, textX, textY);
 
   // Draw QR code below address, shifted up and left
