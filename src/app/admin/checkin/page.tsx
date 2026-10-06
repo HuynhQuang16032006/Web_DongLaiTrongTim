@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { QrCode, Search, CheckCircle2, AlertCircle, ArrowLeft, Users, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -19,23 +19,33 @@ export default function CheckinPage() {
   const [submitting, setSubmitting] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
 
+  const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+
   useEffect(() => {
     // Khởi tạo máy quét QR
-    const scanner = new Html5QrcodeScanner(
+    scannerRef.current = new Html5QrcodeScanner(
       "qr-reader",
       { fps: 10, qrbox: { width: 250, height: 250 }, rememberLastUsedCamera: true },
       false
     );
 
-    scanner.render((decodedText) => {
+    scannerRef.current.render((decodedText) => {
       setOrderCode(decodedText);
-      scanner.pause(true); // Tạm dừng sau khi quét được
+      if (scannerRef.current && scannerRef.current.getState() !== 3) {
+        try {
+          scannerRef.current.pause(true); // Tạm dừng sau khi quét được
+        } catch (e) {
+          console.error("Lỗi khi pause scanner", e);
+        }
+      }
     }, (err) => {
       // Bỏ qua lỗi quét liên tục
     });
 
     return () => {
-      scanner.clear().catch(console.error);
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch(console.error);
+      }
     };
   }, []);
 
@@ -77,15 +87,23 @@ export default function CheckinPage() {
       setSuccessMsg(res.data.message);
       setOrderInfo(null);
       setOrderCode(""); // Reset để quét người tiếp theo
-      
-      // Resume scanner if paused
-      const html5QrCode = (window as any).html5QrcodeScanner;
-      if (html5QrCode) html5QrCode.resume();
-      
     } catch (err: any) {
       setError(err.response?.data?.message || "Lỗi không xác định");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleResumeScanner = () => {
+    setSuccessMsg("");
+    setOrderInfo(null);
+    setOrderCode("");
+    if (scannerRef.current) {
+      try {
+        scannerRef.current.resume();
+      } catch (e) {
+        console.error("Lỗi khi resume scanner", e);
+      }
     }
   };
 
@@ -105,37 +123,35 @@ export default function CheckinPage() {
 
         <div className="bg-white p-8 rounded-3xl shadow-sm border border-warm-sand">
           
-          {!orderInfo && !successMsg && (
-            <>
-              {/* QR Scanner */}
-              <div className="mb-8 rounded-xl overflow-hidden border-2 border-warm-sand">
-                <div id="qr-reader" className="w-full"></div>
-              </div>
+          <div className={(!orderInfo && !successMsg) ? "block" : "hidden"}>
+            {/* QR Scanner */}
+            <div className="mb-8 rounded-xl overflow-hidden border-2 border-warm-sand">
+              <div id="qr-reader" className="w-full"></div>
+            </div>
 
-              <form onSubmit={handleCheckTicket} className="space-y-4">
-                <div>
-                  <label className="block text-left text-sm font-medium text-warm-dark mb-1">Mã vé (VD: DLTT123456)</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      required
-                      className="w-full px-4 py-3 rounded-xl border border-warm-sand bg-warm-cream/50 focus:outline-none focus:ring-2 focus:ring-warm-orange/50 uppercase font-mono tracking-wider"
-                      placeholder="Nhập mã nếu không quét được..."
-                      value={orderCode}
-                      onChange={(e) => setOrderCode(e.target.value)}
-                    />
-                    <button type="submit" disabled={loading} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-warm-dark text-white rounded-lg hover:bg-black transition-colors disabled:opacity-50 flex items-center gap-2">
-                      {loading ? <Loader2 size={20} className="animate-spin" /> : <Search size={20} />}
-                    </button>
-                  </div>
+            <form onSubmit={handleCheckTicket} className="space-y-4">
+              <div>
+                <label className="block text-left text-sm font-medium text-warm-dark mb-1">Mã vé (VD: DLTT123456)</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    required
+                    className="w-full px-4 py-3 rounded-xl border border-warm-sand bg-warm-cream/50 focus:outline-none focus:ring-2 focus:ring-warm-orange/50 uppercase font-mono tracking-wider"
+                    placeholder="Nhập mã nếu không quét được..."
+                    value={orderCode}
+                    onChange={(e) => setOrderCode(e.target.value)}
+                  />
+                  <button type="submit" disabled={loading} className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-warm-dark text-white rounded-lg hover:bg-black transition-colors disabled:opacity-50 flex items-center gap-2">
+                    {loading ? <Loader2 size={20} className="animate-spin" /> : <Search size={20} />}
+                  </button>
                 </div>
-              </form>
-            </>
-          )}
+              </div>
+            </form>
+          </div>
 
           {/* Info Screen */}
           {orderInfo && (
-            <div className="space-y-6 animate-in slide-in-from-bottom-4">
+            <div className="space-y-6 animate-in slide-in-from-bottom-4 mt-6">
               <div className="text-center pb-6 border-b border-warm-sand">
                 <p className="text-sm text-warm-brown uppercase tracking-wider mb-2">Thông tin vé</p>
                 <h3 className="text-3xl font-bold text-warm-dark mb-1">{orderInfo.customerName}</h3>
@@ -185,7 +201,7 @@ export default function CheckinPage() {
               )}
 
               <button 
-                onClick={() => { setOrderInfo(null); setOrderCode(""); }}
+                onClick={handleResumeScanner}
                 className="w-full py-3 text-warm-brown font-medium hover:text-warm-dark transition-colors"
               >
                 Hủy / Quét mã khác
@@ -205,7 +221,7 @@ export default function CheckinPage() {
               <CheckCircle2 size={48} className="mx-auto text-green-500" />
               <p className="font-bold text-lg">{successMsg}</p>
               <button 
-                onClick={() => { setSuccessMsg(""); }}
+                onClick={handleResumeScanner}
                 className="px-6 py-2 bg-green-600 text-white rounded-full text-sm font-medium hover:bg-green-700 transition-colors"
               >
                 Tiếp tục quét
