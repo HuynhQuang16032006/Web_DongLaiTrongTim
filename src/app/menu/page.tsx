@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Coffee, Plus, Minus, CheckCircle2, ArrowRight, Ticket, Loader2, QrCode } from "lucide-react";
 import { Html5QrcodeScanner } from "html5-qrcode";
@@ -100,6 +100,25 @@ export default function MenuPage() {
   const [success, setSuccess] = useState<{ tableNumber: string } | null>(null);
   const [error, setError] = useState("");
   const [showScanner, setShowScanner] = useState(false);
+  const checkTicketCodeRef = useRef<any>(null);
+
+  const checkTicketCode = async (scannedCode?: string) => {
+    const codeToSearch = scannedCode || orderCode;
+    if (!codeToSearch) return;
+    setLoadingCode(true);
+    setError("");
+    try {
+      const res = await axios.get(`/api/orders/food?code=${codeToSearch.toUpperCase()}`);
+      setTicketInfo(res.data);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Mã vé không hợp lệ");
+      setTicketInfo(null);
+    } finally {
+      setLoadingCode(false);
+    }
+  };
+
+  checkTicketCodeRef.current = checkTicketCode;
 
   useEffect(() => {
     if (showScanner) {
@@ -113,6 +132,9 @@ export default function MenuPage() {
         setOrderCode(decodedText);
         setShowScanner(false);
         scanner.clear();
+        if (checkTicketCodeRef.current) {
+          checkTicketCodeRef.current(decodedText);
+        }
       }, () => {});
 
       return () => {
@@ -120,21 +142,6 @@ export default function MenuPage() {
       };
     }
   }, [showScanner]);
-
-  const checkTicketCode = async () => {
-    if (!orderCode) return;
-    setLoadingCode(true);
-    setError("");
-    try {
-      const res = await axios.get(`/api/orders/food?code=${orderCode.toUpperCase()}`);
-      setTicketInfo(res.data);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Mã vé không hợp lệ");
-      setTicketInfo(null);
-    } finally {
-      setLoadingCode(false);
-    }
-  };
 
   const currentTotalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
 

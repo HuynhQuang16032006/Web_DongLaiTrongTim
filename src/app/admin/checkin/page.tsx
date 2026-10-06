@@ -20,6 +20,36 @@ export default function CheckinPage() {
   const [successMsg, setSuccessMsg] = useState("");
 
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
+  const handleCheckTicketRef = useRef<any>(null);
+
+  const handleCheckTicket = async (e?: React.FormEvent, scannedCode?: string) => {
+    if (e) e.preventDefault();
+    const codeToSearch = scannedCode || orderCode;
+    if (!codeToSearch) return;
+    
+    setLoading(true);
+    setError("");
+    setOrderInfo(null);
+    setSuccessMsg("");
+
+    try {
+      const res = await axios.get(`/api/admin/checkin?code=${codeToSearch.toUpperCase()}`);
+      setOrderInfo(res.data);
+      const available = res.data.ticketQuantity - res.data.checkedInCount;
+      setCheckinCount(available);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        window.location.href = "/admin";
+        return;
+      }
+      setError(err.response?.data?.message || "Lỗi không xác định");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Update ref to latest function
+  handleCheckTicketRef.current = handleCheckTicket;
 
   useEffect(() => {
     // Khởi tạo máy quét QR
@@ -38,6 +68,10 @@ export default function CheckinPage() {
           console.error("Lỗi khi pause scanner", e);
         }
       }
+      // Tự động tìm kiếm khi quét được
+      if (handleCheckTicketRef.current) {
+        handleCheckTicketRef.current(undefined, decodedText);
+      }
     }, (err) => {
       // Bỏ qua lỗi quét liên tục
     });
@@ -48,31 +82,6 @@ export default function CheckinPage() {
       }
     };
   }, []);
-
-  const handleCheckTicket = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!orderCode) return;
-    
-    setLoading(true);
-    setError("");
-    setOrderInfo(null);
-    setSuccessMsg("");
-
-    try {
-      const res = await axios.get(`/api/admin/checkin?code=${orderCode.toUpperCase()}`);
-      setOrderInfo(res.data);
-      const available = res.data.ticketQuantity - res.data.checkedInCount;
-      setCheckinCount(available);
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        window.location.href = "/admin";
-        return;
-      }
-      setError(err.response?.data?.message || "Lỗi không xác định");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const submitCheckin = async () => {
     if (!orderCode || checkinCount <= 0) return;
