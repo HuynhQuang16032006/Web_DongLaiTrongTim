@@ -11,8 +11,18 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendTicketEmail(order: any) {
-  // Load custom font to support Vietnamese
+export interface TicketOrder {
+  orderCode: string;
+  customerName: string;
+  customerEmail: string;
+  ticketQuantity: number;
+  donationAmount: number;
+  totalAmount: number;
+}
+
+export async function sendTicketEmail(order: TicketOrder) {
+  try {
+    // Load custom font to support Vietnamese
   if (!GlobalFonts.has("GreatVibes")) {
     GlobalFonts.registerFromPath(path.join(process.cwd(), 'public', 'GreatVibes.ttf'), 'GreatVibes');
   }
@@ -104,5 +114,9 @@ export async function sendTicketEmail(order: any) {
   };
 
   await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error("Error generating or sending ticket email:", error);
+    throw error;
+  }
 }
 

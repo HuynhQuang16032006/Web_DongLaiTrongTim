@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Ticket, Heart, Users, Calendar, MapPin, Loader2 } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export default function TicketForm() {
   const router = useRouter();
@@ -15,7 +16,6 @@ export default function TicketForm() {
     donation: 0,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
   const ticketPrice = 89000;
   const totalAmount = formData.quantity * ticketPrice + Number(formData.donation || 0);
@@ -23,7 +23,6 @@ export default function TicketForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setError("");
 
     try {
       const response = await axios.post("/api/orders", {
@@ -33,11 +32,11 @@ export default function TicketForm() {
         ticketQuantity: formData.quantity,
         donationAmount: Number(formData.donation || 0),
       });
-      
+
       const { orderCode } = response.data;
       router.push(`/checkout/${orderCode}`);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Đã có lỗi xảy ra. Vui lòng thử lại sau.");
+      toast.error(err.response?.data?.message || "Đã có lỗi xảy ra. Vui lòng thử lại sau.");
       setIsSubmitting(false);
     }
   };
@@ -69,7 +68,7 @@ export default function TicketForm() {
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             />
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-warm-dark mb-1">Số điện thoại</label>
@@ -116,10 +115,10 @@ export default function TicketForm() {
                 className="w-8 h-8 rounded-full bg-white border border-warm-sand flex items-center justify-center hover:bg-warm-sand/50 transition-colors"
                 onClick={() => setFormData({ ...formData, quantity: Math.max(1, formData.quantity - 1) })}
               >-</button>
-              
-              <input 
-                type="number" 
-                min="1" 
+
+              <input
+                type="number"
+                min="1"
                 max="10"
                 className="w-12 text-center font-medium bg-transparent border-b border-warm-sand focus:outline-none focus:border-warm-orange p-1 appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                 value={formData.quantity}
@@ -159,11 +158,7 @@ export default function TicketForm() {
           </div>
         </div>
 
-        {error && (
-          <div className="p-3 bg-red-50 text-red-600 rounded-lg text-sm text-center">
-            {error}
-          </div>
-        )}
+
 
         {/* Tổng kết */}
         <div className="pt-4 border-t border-warm-sand">

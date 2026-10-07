@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import FloatingContact from "@/components/FloatingContact";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body
         className={`${inter.variable} ${playfair.variable} font-sans antialiased bg-warm-cream text-warm-dark min-h-screen flex flex-col`}
       >
+        <Toaster richColors position="top-center" />
         {children}
         <FloatingContact />
       </body>

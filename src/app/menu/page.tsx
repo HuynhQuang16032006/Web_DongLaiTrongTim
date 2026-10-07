@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Coffee, Plus, Minus, CheckCircle2, ArrowRight, Ticket, Loader2, QrCode } from "lucide-react";
 import { Html5QrcodeScanner } from "html5-qrcode";
+import { toast } from "sonner";
 
 // Đầy đủ menu quán NOW Coffee & Tea
 const MENU_ITEMS = [
@@ -98,20 +99,26 @@ export default function MenuPage() {
   const [loadingCode, setLoadingCode] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
   const [success, setSuccess] = useState<{ tableNumber: string } | null>(null);
-  const [error, setError] = useState("");
   const [showScanner, setShowScanner] = useState(false);
   const checkTicketCodeRef = useRef<any>(null);
+
+  useEffect(() => {
+    const savedCode = localStorage.getItem("orderCode");
+    if (savedCode) {
+      setOrderCode(savedCode);
+    }
+  }, []);
 
   const checkTicketCode = async (scannedCode?: string) => {
     const codeToSearch = scannedCode || orderCode;
     if (!codeToSearch) return;
     setLoadingCode(true);
-    setError("");
     try {
       const res = await axios.get(`/api/orders/food?code=${codeToSearch.toUpperCase()}`);
       setTicketInfo(res.data);
+      localStorage.setItem("orderCode", codeToSearch.toUpperCase());
     } catch (err: any) {
-      setError(err.response?.data?.message || "Mã vé không hợp lệ");
+      toast.error(err.response?.data?.message || "Mã vé không hợp lệ");
       setTicketInfo(null);
     } finally {
       setLoadingCode(false);
@@ -149,10 +156,9 @@ export default function MenuPage() {
     if (!ticketInfo) return;
 
     if (delta > 0 && currentTotalQty >= ticketInfo.availableFree) {
-      setError(`Bạn chỉ được chọn tối đa ${ticketInfo.availableFree} ly nước theo vé của mình.`);
+      toast.error(`Bạn chỉ được chọn tối đa ${ticketInfo.availableFree} ly nước theo vé của mình.`);
       return;
     }
-    setError("");
 
     setCart((prev) => {
       const existing = prev.find((item) => item.id === id);
@@ -175,11 +181,10 @@ export default function MenuPage() {
 
   const handleSubmit = async () => {
     if (!orderCode || !tableNumber || cart.length === 0) {
-      setError("Vui lòng điền đủ số bàn và chọn ít nhất 1 món.");
+      toast.error("Vui lòng điền đủ số bàn và chọn ít nhất 1 món.");
       return;
     }
     setLoadingSubmit(true);
-    setError("");
 
     const itemsDetail = cart.map(item => {
       const p = MENU_ITEMS.find(m => m.id === item.id);
@@ -194,7 +199,7 @@ export default function MenuPage() {
       });
       setSuccess({ tableNumber });
     } catch (err: any) {
-      setError(err.response?.data?.message || "Lỗi đặt món. Vui lòng thử lại.");
+      toast.error(err.response?.data?.message || "Lỗi đặt món. Vui lòng thử lại.");
     } finally {
       setLoadingSubmit(false);
     }
@@ -288,7 +293,10 @@ export default function MenuPage() {
                 )}
               </div>
               <button 
-                onClick={() => { setTicketInfo(null); setCart([]); setOrderCode(""); }}
+                onClick={() => { 
+                  setTicketInfo(null); setCart([]); setOrderCode(""); 
+                  localStorage.removeItem("orderCode");
+                }}
                 className="text-xs text-warm-brown underline hover:text-warm-dark whitespace-nowrap ml-2"
               >
                 Đổi mã vé
@@ -363,13 +371,7 @@ export default function MenuPage() {
           </div>
         )}
 
-        {error && (
-          <div className="sticky bottom-24 z-30">
-            <p className="text-white text-center font-medium bg-red-500/90 backdrop-blur-sm p-3 rounded-xl shadow-lg border border-red-600 animate-in slide-in-from-bottom-2">
-              {error}
-            </p>
-          </div>
-        )}
+
 
       </div>
 
