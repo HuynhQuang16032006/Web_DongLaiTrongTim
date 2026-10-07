@@ -91,7 +91,13 @@ const MENU_ITEMS = [
 
 export default function MenuPage() {
   const [orderCode, setOrderCode] = useState("");
-  const [ticketInfo, setTicketInfo] = useState<{ customerName: string, availableFree: number } | null>(null);
+  const [ticketInfo, setTicketInfo] = useState<{ 
+    customerName: string;
+    availableFree: number;
+    ticketQuantity: number;
+    checkedInCount: number;
+    claimedDrinks: number;
+  } | null>(null);
   
   const [tableNumber, setTableNumber] = useState("");
   const [cart, setCart] = useState<{ id: number; quantity: number; note: string }[]>([]);
@@ -288,8 +294,12 @@ export default function MenuPage() {
                   <p className="text-sm text-green-600 mt-2 font-medium flex items-center gap-1">
                     <CheckCircle2 size={14} /> Bạn được chọn <strong className="text-lg">{ticketInfo.availableFree}</strong> ly nước
                   </p>
+                ) : ticketInfo.ticketQuantity > ticketInfo.checkedInCount ? (
+                  <p className="text-sm text-red-500 mt-2 font-medium">
+                    Vui lòng ra quầy checkin trước khi gọi món (còn {ticketInfo.ticketQuantity - ticketInfo.checkedInCount} vé chưa checkin).
+                  </p>
                 ) : (
-                  <p className="text-sm text-warm-orange mt-2 font-medium">Bạn đã gọi đủ số nước cho vé này.</p>
+                  <p className="text-sm text-warm-orange mt-2 font-medium">Bạn đã gọi đủ số lượng nước của vé.</p>
                 )}
               </div>
               <button 
