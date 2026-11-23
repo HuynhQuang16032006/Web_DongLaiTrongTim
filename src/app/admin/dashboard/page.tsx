@@ -95,7 +95,7 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-warm-sand">
             <p className="text-warm-brown text-sm font-medium mb-1">Tổng vé đã bán</p>
-            <p className="text-3xl font-bold text-warm-dark">{data?.summary?.ticketsSold} / 100</p>
+            <p className="text-3xl font-bold text-warm-dark">{data?.summary?.ticketsSold} / 120</p>
           </div>
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-warm-sand">
             <p className="text-warm-brown text-sm font-medium mb-1">Khách đã đến (Checkin)</p>

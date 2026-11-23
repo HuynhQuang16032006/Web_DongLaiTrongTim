@@ -95,8 +95,8 @@ export async function sendTicketEmail(order: TicketOrder) {
 
         <h4 style="color: #8B5A33;">Thông tin sự kiện:</h4>
         <ul>
-          <li><strong>Thời gian:</strong> 16:00 - 31/01/2026</li>
-          <li><strong>Địa điểm:</strong> NOW Coffee and Tea (190 Trương Công Định, phường Tân Bình, HCM)</li>
+          <li><strong>Thời gian:</strong> 17h30 Thứ Bảy, ngày 09/01/2027</li>
+          <li><strong>Địa điểm:</strong> Nhà hàng hoa viên Đệ Nhất (21 Hoàng Việt, Phường Tân Sơn Nhất, TP. Hồ Chí Minh)</li>
         </ul>
 
         <p>Hẹn gặp bạn tại đêm nhạc!</p>

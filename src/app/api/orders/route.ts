@@ -11,18 +11,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Vui lòng điền đầy đủ thông tin bắt buộc" }, { status: 400 });
     }
 
-    // Check ticket limit (max 100)
+    // Check ticket limit (max 120)
     const ticketPrice = 89000;
     const totalAmount = (ticketQuantity * ticketPrice) + Number(donationAmount || 0);
 
     const currentOrders = await prisma.order.aggregate({
       _sum: { ticketQuantity: true },
-      where: { status: { not: "CANCELLED" } }
+      where: { status: { notIn: ["CANCELLED", "EXPIRED"] } }
     });
 
     const currentSold = currentOrders._sum.ticketQuantity || 0;
-    if (currentSold + ticketQuantity > 100) {
-      return NextResponse.json({ message: `Chỉ còn lại ${Math.max(0, 100 - currentSold)} vé.` }, { status: 400 });
+    if (currentSold + ticketQuantity > 120) {
+      return NextResponse.json({ message: `Chỉ còn lại ${Math.max(0, 120 - currentSold)} vé.` }, { status: 400 });
     }
 
     // Generate unique order code: DLTT + 6 random alphanumeric characters

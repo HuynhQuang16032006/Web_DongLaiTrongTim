@@ -331,7 +331,7 @@ export default function MenuPage() {
 
             <div className="space-y-6">
               <div className="text-center">
-                <h3 className="font-playfair font-bold text-warm-dark text-3xl">Menu NOW Coffee & Tea</h3>
+                <h3 className="font-playfair font-bold text-warm-dark text-3xl">Menu Nhà hàng hoa viên Đệ Nhất</h3>
                 <p className="text-sm text-warm-brown italic mt-1">* Vui lòng chọn nước tương ứng với số lượng vé</p>
               </div>
               

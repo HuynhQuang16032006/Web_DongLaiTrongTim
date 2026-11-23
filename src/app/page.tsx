@@ -41,14 +41,14 @@ export default function Home() {
               <Calendar className="text-warm-orange shrink-0" size={24} />
               <div className="text-left">
                 <p className="text-xs text-white/50 uppercase tracking-wider">Thời gian</p>
-                <p className="font-semibold text-base sm:text-lg">16:30 - 02/01/2027</p>
+                <p className="font-semibold text-base sm:text-lg">17h30 Thứ Bảy, 09/01/2027</p>
               </div>
             </div>
             <div className="flex items-center gap-3 bg-warm-dark/40 border border-white/10 px-6 py-4 rounded-2xl backdrop-blur-md shadow-2xl hover:bg-warm-dark/60 transition-colors w-full sm:w-auto">
               <MapPin className="text-warm-orange shrink-0" size={24} />
               <div className="text-left">
                 <p className="text-xs text-white/50 uppercase tracking-wider">Địa điểm</p>
-                <p className="font-semibold text-base sm:text-lg truncate max-w-[200px] sm:max-w-none">NOW Coffee and Tea, Tân Bình</p>
+                <p className="font-semibold text-base sm:text-lg">Nhà hàng hoa viên Đệ Nhất, 21 Hoàng Việt, Phường Tân Sơn Nhất, TP. Hồ Chí Minh</p>
               </div>
             </div>
           </div>
@@ -131,7 +131,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-playfair font-bold text-white mb-4">Giữ chỗ cho đêm nhạc</h2>
             <p className="text-warm-cream/70 max-w-2xl mx-auto text-lg">
-              Chỉ có giới hạn 100 vé để đảm bảo không gian ấm cúng nhất. Hãy nhanh tay đặt vé và cùng lan tỏa yêu thương cùng Đọng Band.
+              Chỉ có giới hạn 120 vé để đảm bảo không gian ấm cúng nhất. Hãy nhanh tay đặt vé và cùng lan tỏa yêu thương cùng Đọng Band.
             </p>
           </div>
 
